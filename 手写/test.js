@@ -1,17 +1,35 @@
-// const flatten = (arr) => {
-//   let res = [];
-//   for (const item of arr) {
-//     if (Array.isArray(item)) {
-//       // 递归终点：数组中没有嵌套的数组，那么函数返回一个数组，使用 ... 来 push 拼接。
-//       res.push(...flatten(item));
-//       // 或者 res = res.concat(flatten(item));
-//     } else {
-//       res.push(item);
-//     }
-//   }
-//   return res;
-// }
-const flatten = (arr) => arr.reduce((pre, cur) => pre.concat(Array.isArray(cur) ? flatten(cur) : cur), [])
+const myInstanceof = (instance, target) => {
+  const isObject = typeof instance === 'object' && instance !== null;
+  const isFunction = typeof instance === 'function';
+  
+  if (!isObject && !isFunction) return false;
 
-const arr = [1, [2, [3, [4]]]]
-console.log(flatten(arr));
+  let proto = Object.getPrototypeOf(instance);
+  const targetPrototype = target.prototype;
+
+  while (proto !== null) {
+    if (proto === targetPrototype) return true;
+    proto = Object.getPrototypeOf(proto);
+  }
+
+  return false;
+}
+
+function Animal() {}
+Animal.prototype.Say = function() {
+  console.log("I am an animal");
+};
+
+function Dog() {}
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+function Cat() {}
+Cat.prototype = Object.create(Animal.prototype);
+Cat.prototype.constructor = Cat;
+
+const dahuang = new Dog();
+const tom = new Cat();
+
+console.log(myInstanceof(dahuang, Animal));
+console.log(myInstanceof(dahuang, Cat));
